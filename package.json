@@ -9,6 +9,15 @@
 		"dist",
 		"README.md"
 	],
+	"keywords": [
+		"video",
+		"player",
+		"hls",
+		"mp4",
+		"youtube",
+		"mobile",
+		"support"
+	],
 	"scripts": {
 		"dev": "vite",
 		"build": "rollup -c --bunndleConfigAsCjs",
