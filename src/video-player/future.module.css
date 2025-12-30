@@ -1,0 +1,70 @@
+.playlist {
+	pointer-events: all !important;
+	position: relative;
+	& > .current {
+		width: fit-content !important;
+		padding-inline: 20px;
+		border-radius: 10px;
+		&::before {
+			border-radius: 8px;
+		}
+	}
+	& > .menu {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		right: 0;
+		z-index: 18;
+		top: calc(100% + 10px);
+		background-color: var(--color-primary);
+		backdrop-filter: blur(10px);
+		width: 300px;
+		min-height: 100px;
+		padding: 10px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		border-radius: 5px;
+		& details {
+			display: flex;
+			flex-direction: column;
+			background-color: var(--color-primary);
+			border-radius: 5px;
+			&:hover {
+				background-color: var(--color-primary-light);
+			}
+			&:open > summary.title {
+				border-bottom: 1px solid #eeeeee70;
+			}
+			& > .title {
+				padding: 10px;
+				list-style-type: none;
+				cursor: pointer;
+			}
+			& > .title:not(summary) {
+				border-radius: 5px;
+				margin: 5px;
+				position: relative;
+				margin-left: 25px;
+
+				&::before {
+					content: '';
+					position: absolute;
+					inset-block: 0;
+					left: -10px;
+					border-left: 1px solid #eeeeee70;
+				}
+				&:hover {
+					background-color: var(--color-primary-light);
+				}
+			}
+			& .list {
+				display: flex;
+				flex-direction: column;
+				gap: 3px;
+				padding-inline: 5px;
+				padding-block: 10px;
+			}
+		}
+	}
+}
