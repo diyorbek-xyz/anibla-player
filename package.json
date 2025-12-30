@@ -1,6 +1,6 @@
 {
 	"name": "@diyorbek-xyz/anibla-player",
-	"version": "1.4.2",
+	"version": "2.0.0",
 	"type": "module",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
