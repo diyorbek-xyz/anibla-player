@@ -11,12 +11,21 @@
 	],
 	"keywords": [
 		"video",
+		"youtube",
+		"yt",
 		"player",
 		"hls",
+		"hls.js",
+		"m3u8",
 		"mp4",
-		"youtube",
 		"mobile",
-		"support"
+		"support",
+		"anibla",
+		"anime",
+		"birinchi",
+		"uzbek",
+		"fandab",
+		"fandub"
 	],
 	"scripts": {
 		"dev": "vite",
