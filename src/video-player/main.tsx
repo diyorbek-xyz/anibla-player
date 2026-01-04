@@ -8,7 +8,7 @@ if (root) {
 	createRoot(root).render(
 		<StrictMode>
 			<div>
-				<VideoPlayer src='/video.mp4' poster='/poster.png' />
+				<VideoPlayer custom={[{ child: 'DD', isButton: true, onClick: null as any, className: '' }]} src='/video.mp4' poster='/poster.png' />
 			</div>
 		</StrictMode>
 	);

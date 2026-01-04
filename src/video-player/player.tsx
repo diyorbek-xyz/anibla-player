@@ -15,11 +15,12 @@ import type { Level } from 'hls.js';
  *
  * <VideoPlayer src="video.m3u8" poster="poster.png" preview="previews.vtt" download="download.mp4">;
  */
-function VideoPlayer({ src, poster, download }: { src: string; poster: string; download?: string }) {
+function VideoPlayer({ src, poster, download, custom }: { src: string; poster: string; download?: string; custom?: { child: any; className?: string; onClick?: React.MouseEventHandler<HTMLDivElement>; isButton?: boolean }[] }) {
 	const { videoRef, state, actions } = useVideoPlayer(src);
 	const [fullscreen, setFullscreen] = useState<boolean>(false);
 	const [isResolutionMenuOpen, setIsResolutionMenuOpen] = useState<boolean>(false);
 	const isMobile = screen.width < 700 || navigator.userAgent.toLowerCase().includes('mobile');
+
 	useEffect(() => {
 		window.addEventListener('keydown', keyboard);
 		return () => {
@@ -140,7 +141,18 @@ function VideoPlayer({ src, poster, download }: { src: string; poster: string; d
 					</div>
 				</div>
 				<div className={style.controls}>
-					<TimeSlider playing={state.playing} play={actions.play} pause={actions.pause} buffers={state.buffers} duration={state.duration} currentTime={state.currentTime} changeTime={(currentTime: number) => actions.seek(currentTime)} />
+					{custom && (
+						<div className={style.custom}>
+							{custom?.map((el, i) => {
+								return (
+									<div key={i} className={cn(el.isButton ? style.button : '', el.className)} onClick={el.onClick}>
+										{el.child}
+									</div>
+								);
+							})}
+						</div>
+					)}
+					<TimeSlider buffers={state.buffers} duration={state.duration} currentTime={state.currentTime} changeTime={(currentTime: number) => actions.seek(currentTime)} />
 					<RenditionMenu levels={state.levels} level={state.currentLevel} changeLevel={actions.changeLevel} isOpen={isResolutionMenuOpen} setIsOpen={setIsResolutionMenuOpen} />
 					<div className={style.main}>
 						<div className={cn(style.button, style.play)} data-tooltip='Play/Pause [Space]' data-name='TogglePlayingButton' onClick={() => actions.togglePlay()}>
@@ -201,7 +213,7 @@ function RenditionMenu({ isOpen, setIsOpen, levels, level, changeLevel }: { leve
 		</>
 	);
 }
-function TimeSlider({ changeTime, currentTime, duration, buffers, pause, play, playing }: { changeTime: (props: number) => void; pause: () => void; play: () => void; playing: boolean; previews?: string; duration: number; currentTime: number; buffers?: any }) {
+function TimeSlider({ changeTime, currentTime, duration, buffers }: { changeTime: (props: number) => void; previews?: string; duration: number; currentTime: number; buffers?: any }) {
 	const timebarRef = useRef<HTMLDivElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const [timePreview, setTimePreview] = useState<{ time: string; image?: string; position?: number }>({ time: '', position: 0 });
@@ -215,7 +227,6 @@ function TimeSlider({ changeTime, currentTime, duration, buffers, pause, play, p
 		changeTime(newTime);
 	};
 	const dragTime = (clientX: number, change: boolean) => {
-		pause();
 		const rect = timebarRef.current!.getBoundingClientRect();
 		const timeAtCursor = ((clientX - rect.left) / rect.width) * duration;
 
@@ -227,7 +238,7 @@ function TimeSlider({ changeTime, currentTime, duration, buffers, pause, play, p
 		}
 		if (previewRef.current) {
 			const preview_width = previewRef.current.getBoundingClientRect().width;
-			const position = Math.max(Math.min(clientX - 25 - preview_width / 2, rect.width - rect.left - preview_width), rect.left);
+			const position = Math.max(Math.min(clientX -rect.left- preview_width/2, rect.width - rect.left - preview_width), rect.left);
 			setTimePreview({ position: position, time: timeFormatter(Math.min(Math.max(timeAtCursor, 0), duration)), image: undefined });
 		} else {
 			setTimePreview({ time: timeFormatter(Math.min(Math.max(timeAtCursor, 0), duration)), image: undefined });
@@ -237,7 +248,7 @@ function TimeSlider({ changeTime, currentTime, duration, buffers, pause, play, p
 	};
 	const handleTimeTouch = (e: TouchEvent<HTMLDivElement>) => dragTime(e.touches[0].clientX, true);
 	const handleTimeMove = (e: any) => dragTime(e.clientX, e.buttons === 1);
-	const exitTimePreview = () => (setEnabled(false), playing && play(), (timebarRef.current!.dataset.hover = false as any));
+	const exitTimePreview = () => (setEnabled(false), (timebarRef.current!.dataset.hover = false as any));
 
 	return (
 		<>
@@ -270,9 +281,9 @@ function TimeSlider({ changeTime, currentTime, duration, buffers, pause, play, p
 					)}
 				</div>
 				{!isMobile && (
-					<div ref={previewRef} className={style.preview_root} style={{ left: timePreview.position }}>
-						<div hidden={!enabled} className={style.preview} data-image={!timePreview.image}>
-							{timePreview.image && <img className={style.preview_image} src='/poster.png' />}
+					<div className={style.preview_root} style={{ left: timePreview.position }}>
+						<div ref={previewRef} hidden={!enabled} className={style.preview} data-image={!timePreview.image}>
+							{!timePreview.image && <img className={style.preview_image} src='/poster.png' />}
 							<h1 className={style.preview_time}>{timePreview.time}</h1>
 						</div>
 					</div>
